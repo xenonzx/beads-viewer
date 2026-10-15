@@ -17,6 +17,11 @@ dist
 dist-ssr
 *.local
 
+# Local environment (machine-specific paths like BEADS_DIR)
+.env
+.env.local
+.env.*.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

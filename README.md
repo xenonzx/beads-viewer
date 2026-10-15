@@ -43,12 +43,21 @@ bun dev:full
 
 Open your browser to **http://localhost:5173**
 
+> **📁 Pointing at your project:** By default the server reads the Beads store
+> (`.beads/`) from the directory it was started in. To view a project located
+> elsewhere, set the `BEADS_DIR` environment variable to that project's
+> directory before starting the server:
+>
+> ```bash
+> BEADS_DIR=/path/to/your/project bun dev:full
+> ```
+
 ### What Just Happened?
 
 - Frontend dev server started on port **5173**
 - Backend API server started on port **3001**
-- Server connected to the `bd` CLI in your current directory
-- File watcher monitoring `.beads/issues.jsonl` for external changes
+- Server connected to the `bd` CLI for the project in `BEADS_DIR` (or your current directory if unset)
+- File watcher monitoring that project's `.beads/issues.jsonl` for external changes
 
 ## Screenshots
 
@@ -301,8 +310,18 @@ Create a `.env` file (optional):
 # Backend
 PORT=3001
 
+# Point the server at a Beads project directory (defaults to the server's cwd).
+# Must contain a .beads/ store; used for both bd commands and the file watcher.
+BEADS_DIR=/path/to/project
+
 # Frontend
 VITE_API_URL=http://localhost:3001/api
+```
+
+### Running against another project
+
+```bash
+BEADS_DIR=/path/to/project bun run server
 ```
 
 ### Port Configuration
