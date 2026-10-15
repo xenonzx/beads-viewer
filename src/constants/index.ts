@@ -1,12 +1,13 @@
 import type { Status, IssueType } from '@/types/issue'
 
 // Issue Status Constants
-export const ISSUE_STATUSES: readonly Status[] = ['open', 'in_progress', 'blocked', 'closed'] as const
+export const ISSUE_STATUSES: readonly Status[] = ['open', 'in_progress', 'blocked', 'deferred', 'closed'] as const
 
 export const STATUS_LABELS: Record<Status, string> = {
   open: 'Open',
   in_progress: 'In Progress',
   blocked: 'Blocked',
+  deferred: 'Deferred',
   closed: 'Closed',
 }
 
@@ -14,6 +15,7 @@ export const STATUS_COLORS: Record<Status, string> = {
   open: 'bg-blue-100 dark:bg-blue-900',
   in_progress: 'bg-yellow-100 dark:bg-yellow-900',
   blocked: 'bg-red-100 dark:bg-red-900',
+  deferred: 'bg-gray-100 dark:bg-gray-800',
   closed: 'bg-green-100 dark:bg-green-900',
 }
 
@@ -21,6 +23,7 @@ export const STATUS_BADGE_COLORS: Record<Status, string> = {
   open: '#3b82f6',
   in_progress: '#eab308',
   blocked: '#ef4444',
+  deferred: '#6b7280',
   closed: '#22c55e',
 }
 

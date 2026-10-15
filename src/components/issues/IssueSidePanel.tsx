@@ -16,6 +16,7 @@ const statusColors: Record<string, string> = {
   open: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
   in_progress: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
   blocked: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+  deferred: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
   closed: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
 }
 
@@ -248,6 +249,7 @@ export function IssueSidePanel({ issueId, onClose, onNavigate, defaultEditMode =
                   <option value="open">Open</option>
                   <option value="in_progress">In Progress</option>
                   <option value="blocked">Blocked</option>
+                  <option value="deferred">Deferred</option>
                   <option value="closed">Closed</option>
                 </select>
               ) : (

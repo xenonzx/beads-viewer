@@ -1,4 +1,4 @@
-export type Status = 'open' | 'in_progress' | 'blocked' | 'closed'
+export type Status = 'open' | 'in_progress' | 'blocked' | 'deferred' | 'closed'
 
 export type IssueType = 'bug' | 'feature' | 'task' | 'epic' | 'chore'
 
