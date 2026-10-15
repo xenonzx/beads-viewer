@@ -301,8 +301,18 @@ Create a `.env` file (optional):
 # Backend
 PORT=3001
 
+# Point the server at a Beads project directory (defaults to the server's cwd).
+# Must contain a .beads/ store; used for both bd commands and the file watcher.
+BEADS_DIR=/path/to/project
+
 # Frontend
 VITE_API_URL=http://localhost:3001/api
+```
+
+### Running against another project
+
+```bash
+BEADS_DIR=/path/to/project bun run server
 ```
 
 ### Port Configuration

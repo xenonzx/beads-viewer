@@ -341,6 +341,7 @@ bun test:ui           # Interactive UI dashboard
   - Install packages: `bun add package-name`
   - Run scripts: `bun run script-name` or `bun script-name`
 - **Port Configuration**: Frontend on :5173, Backend on :3001
+- **Beads Project Directory**: The server targets the project directory it was started in. Set `BEADS_DIR=/path/to/project` to point it at another Beads project (must contain `.beads/`); this is passed to `bd` via `-C` and used for the file watcher.
 - **External Changes**: File watcher detects external CLI usage (best-effort, may miss rapid changes)
 
 ### Component Interaction Patterns

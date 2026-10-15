@@ -5,6 +5,7 @@ import { WebSocketServer } from 'ws';
 import { watch } from 'fs';
 import { join } from 'path';
 import * as bd from './utils/bd-cli';
+import { BEADS_DIR } from './utils/bd-cli';
 import type { Issue } from '../src/types/issue';
 
 const app = express();
@@ -15,8 +16,8 @@ const wss = new WebSocketServer({ server });
 app.use(cors());
 app.use(express.json());
 
-// JSONL path
-const JSONL_PATH = join(process.cwd(), '.beads', 'issues.jsonl');
+// JSONL path (BEADS_DIR points at the project dir containing .beads/)
+const JSONL_PATH = join(BEADS_DIR || process.cwd(), '.beads', 'issues.jsonl');
 
 // Helper: Broadcast to all WebSocket clients
 function broadcast(message: any) {
