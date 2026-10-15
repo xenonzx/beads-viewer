@@ -101,6 +101,14 @@ async function execBd(args: string[]): Promise<any> {
 }
 
 /**
+ * `bd show`/`update`/`close` return a single-element array, `bd create`/`list`
+ * return a bare object. Normalize both to one issue.
+ */
+function unwrapIssue(result: BdIssue | BdIssue[]): BdIssue {
+  return Array.isArray(result) ? result[0] : result;
+}
+
+/**
  * List all issues
  */
 export async function listIssues(): Promise<BdIssue[]> {
@@ -111,7 +119,7 @@ export async function listIssues(): Promise<BdIssue[]> {
  * Get a single issue by ID
  */
 export async function getIssue(id: string): Promise<BdIssue> {
-  return await execBd(['show', id]);
+  return unwrapIssue(await execBd(['show', id]));
 }
 
 /**
@@ -148,7 +156,7 @@ export async function createIssue(options: BdCreateOptions): Promise<BdIssue> {
     args.push('--deps', options.deps.join(','));
   }
 
-  return await execBd(args);
+  return unwrapIssue(await execBd(args));
 }
 
 /**
@@ -182,16 +190,14 @@ export async function updateIssue(options: BdUpdateOptions): Promise<BdIssue> {
     args.push('--notes', options.notes);
   }
 
-  return await execBd(args);
+  return unwrapIssue(await execBd(args));
 }
 
 /**
  * Close an issue
  */
 export async function closeIssue(id: string): Promise<BdIssue> {
-  const result = await execBd(['close', id]);
-  // bd close returns an array, so extract the first item
-  return Array.isArray(result) ? result[0] : result;
+  return unwrapIssue(await execBd(['close', id]));
 }
 
 /**
