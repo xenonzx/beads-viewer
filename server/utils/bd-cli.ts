@@ -1,12 +1,27 @@
 import { spawn } from 'child_process';
 
+/**
+ * Optional project directory containing the .beads/ store. When set, bd is
+ * pointed at it via -C instead of the server's working directory.
+ */
+export const BEADS_DIR = process.env.BEADS_DIR;
+
+/**
+ * Build the argv for a bd invocation, adding the global --json flag and,
+ * when a directory is configured, the -C <dir> global flag.
+ */
+export function buildBdArgs(args: string[], dir: string | undefined = BEADS_DIR): string[] {
+  const withJson = [...args, '--json'];
+  return dir ? ['-C', dir, ...withJson] : withJson;
+}
+
 export interface BdIssue {
   id: string;
   title: string;
   description?: string;
   design?: string;
   acceptance_criteria?: string;
-  status: 'open' | 'in_progress' | 'blocked' | 'closed';
+  status: 'open' | 'in_progress' | 'blocked' | 'deferred' | 'closed';
   priority: number; // 0-4, 0=highest
   issue_type: 'bug' | 'feature' | 'task' | 'epic' | 'chore';
   created_at: string;
@@ -34,7 +49,7 @@ export interface BdCreateOptions {
 export interface BdUpdateOptions {
   id: string;
   title?: string;
-  status?: 'open' | 'in_progress' | 'blocked' | 'closed';
+  status?: 'open' | 'in_progress' | 'blocked' | 'deferred' | 'closed';
   priority?: number;
   assignee?: string;
   design?: string;
@@ -48,10 +63,7 @@ export interface BdUpdateOptions {
  */
 async function execBd(args: string[]): Promise<any> {
   return new Promise((resolve, reject) => {
-    // Always add --json flag for programmatic output
-    const allArgs = [...args, '--json'];
-
-    const proc = spawn('bd', allArgs, {
+    const proc = spawn('bd', buildBdArgs(args), {
       stdio: ['ignore', 'pipe', 'pipe'],
       env: process.env,
     });
@@ -89,6 +101,14 @@ async function execBd(args: string[]): Promise<any> {
 }
 
 /**
+ * `bd show`/`update`/`close` return a single-element array, `bd create`/`list`
+ * return a bare object. Normalize both to one issue.
+ */
+function unwrapIssue(result: BdIssue | BdIssue[]): BdIssue {
+  return Array.isArray(result) ? result[0] : result;
+}
+
+/**
  * List all issues
  */
 export async function listIssues(): Promise<BdIssue[]> {
@@ -99,7 +119,7 @@ export async function listIssues(): Promise<BdIssue[]> {
  * Get a single issue by ID
  */
 export async function getIssue(id: string): Promise<BdIssue> {
-  return await execBd(['show', id]);
+  return unwrapIssue(await execBd(['show', id]));
 }
 
 /**
@@ -136,7 +156,7 @@ export async function createIssue(options: BdCreateOptions): Promise<BdIssue> {
     args.push('--deps', options.deps.join(','));
   }
 
-  return await execBd(args);
+  return unwrapIssue(await execBd(args));
 }
 
 /**
@@ -170,16 +190,14 @@ export async function updateIssue(options: BdUpdateOptions): Promise<BdIssue> {
     args.push('--notes', options.notes);
   }
 
-  return await execBd(args);
+  return unwrapIssue(await execBd(args));
 }
 
 /**
  * Close an issue
  */
 export async function closeIssue(id: string): Promise<BdIssue> {
-  const result = await execBd(['close', id]);
-  // bd close returns an array, so extract the first item
-  return Array.isArray(result) ? result[0] : result;
+  return unwrapIssue(await execBd(['close', id]));
 }
 
 /**

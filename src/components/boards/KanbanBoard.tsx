@@ -16,7 +16,7 @@ import { useIssueStore } from '@/store/useIssueStore'
 import type { Issue, Status } from '@/types/issue'
 import { cn } from '@/lib/utils'
 import { IssueSidePanel } from '../issues/IssueSidePanel'
-import { STATUS_COLORS, STATUS_LABELS } from '@/constants'
+import { STATUS_COLORS, STATUS_LABELS, ISSUE_STATUSES } from '@/constants'
 
 function DraggableIssueCard({ issue, onClick }: { issue: Issue; onClick?: () => void }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -147,15 +147,12 @@ export function KanbanBoard() {
   )
 
   const groupedIssues = useMemo(() => {
-    const groups: Record<Status, Issue[]> = {
-      open: [],
-      in_progress: [],
-      blocked: [],
-      closed: [],
-    }
+    const groups = Object.fromEntries(
+      ISSUE_STATUSES.map(status => [status, [] as Issue[]])
+    ) as Record<Status, Issue[]>
 
     issues.forEach(issue => {
-      groups[issue.status].push(issue)
+      groups[issue.status]?.push(issue)
     })
 
     return groups
@@ -219,10 +216,9 @@ export function KanbanBoard() {
         onDragEnd={handleDragEnd}
       >
         <div className="flex gap-4 overflow-x-auto pb-4">
-          <Column status="open" issues={groupedIssues.open} onIssueClick={setSelectedIssueId} />
-          <Column status="in_progress" issues={groupedIssues.in_progress} onIssueClick={setSelectedIssueId} />
-          <Column status="blocked" issues={groupedIssues.blocked} onIssueClick={setSelectedIssueId} />
-          <Column status="closed" issues={groupedIssues.closed} onIssueClick={setSelectedIssueId} />
+          {ISSUE_STATUSES.map(status => (
+            <Column key={status} status={status} issues={groupedIssues[status]} onIssueClick={setSelectedIssueId} />
+          ))}
         </div>
 
         <DragOverlay>
