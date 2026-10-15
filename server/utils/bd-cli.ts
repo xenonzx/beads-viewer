@@ -1,5 +1,20 @@
 import { spawn } from 'child_process';
 
+/**
+ * Optional project directory containing the .beads/ store. When set, bd is
+ * pointed at it via -C instead of the server's working directory.
+ */
+export const BEADS_DIR = process.env.BEADS_DIR;
+
+/**
+ * Build the argv for a bd invocation, adding the global --json flag and,
+ * when a directory is configured, the -C <dir> global flag.
+ */
+export function buildBdArgs(args: string[], dir: string | undefined = BEADS_DIR): string[] {
+  const withJson = [...args, '--json'];
+  return dir ? ['-C', dir, ...withJson] : withJson;
+}
+
 export interface BdIssue {
   id: string;
   title: string;
@@ -48,10 +63,7 @@ export interface BdUpdateOptions {
  */
 async function execBd(args: string[]): Promise<any> {
   return new Promise((resolve, reject) => {
-    // Always add --json flag for programmatic output
-    const allArgs = [...args, '--json'];
-
-    const proc = spawn('bd', allArgs, {
+    const proc = spawn('bd', buildBdArgs(args), {
       stdio: ['ignore', 'pipe', 'pipe'],
       env: process.env,
     });
